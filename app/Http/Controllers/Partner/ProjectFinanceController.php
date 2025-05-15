@@ -4,19 +4,30 @@ namespace App\Http\Controllers\Partner;
 
 use App\Http\Controllers\Controller;
 use App\Models\Project;
-use App\Models\ProjectScheduleItem;
+use App\Models\ProjectFinanceItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
-class ProjectScheduleController extends Controller
+class ProjectFinanceController extends Controller
 {
     /**
-     * Получить список элементов графика для проекта
+     * Получить список элементов финансов для проекта
      */
     public function index(Project $project)
     {
         $this->authorize('view', $project);
         
-        $items = $project->scheduleItems()->orderBy('type')->orderBy('position')->get();
+        // Добавляем логирование для отладки
+        Log::info('Запрос на получение финансовых данных', [
+            'project_id' => $project->id,
+            'route' => request()->route()->getName()
+        ]);
+        
+        $items = $project->financeItems()->orderBy('type')->orderBy('position')->get();
+        
+        // Логируем количество найденных записей
+        Log::info('Найдено финансовых записей: ' . $items->count());
         
         return response()->json([
             'success' => true,
@@ -25,9 +36,9 @@ class ProjectScheduleController extends Controller
     }
     
     /**
-     * Получить конкретный элемент графика
+     * Получить конкретный элемент финансов
      */
-    public function show(ProjectScheduleItem $item)
+    public function show(ProjectFinanceItem $item)
     {
         $this->authorize('view', $item->project);
         
@@ -38,7 +49,7 @@ class ProjectScheduleController extends Controller
     }
     
     /**
-     * Сохранить новый элемент графика
+     * Сохранить новый элемент финансов
      */
     public function store(Request $request, Project $project)
     {
@@ -52,11 +63,11 @@ class ProjectScheduleController extends Controller
         ]);
         
         // Определение позиции для нового элемента (последняя + 1)
-        $position = $project->scheduleItems()
+        $position = $project->financeItems()
             ->where('type', $validated['type'])
             ->max('position') + 1;
             
-        $item = $project->scheduleItems()->create([
+        $item = $project->financeItems()->create([
             'type' => $validated['type'],
             'name' => $validated['name'],
             'total_amount' => $validated['total_amount'],
@@ -72,9 +83,9 @@ class ProjectScheduleController extends Controller
     }
     
     /**
-     * Обновить существующий элемент графика
+     * Обновить существующий элемент финансов
      */
-    public function update(Request $request, ProjectScheduleItem $item)
+    public function update(Request $request, ProjectFinanceItem $item)
     {
         $this->authorize('update', $item->project);
         
@@ -82,6 +93,7 @@ class ProjectScheduleController extends Controller
             'name' => 'sometimes|required|string|max:255',
             'total_amount' => 'sometimes|required|numeric|min:0',
             'paid_amount' => 'sometimes|required|numeric|min:0',
+            'type' => 'sometimes|string|in:main_work,main_material,additional_work,additional_material,transportation',
         ]);
         
         $item->update($validated);
@@ -94,7 +106,7 @@ class ProjectScheduleController extends Controller
     }
     
     /**
-     * Обновить порядок элементов графика
+     * Обновить порядок элементов финансов
      */
     public function updatePositions(Request $request, Project $project)
     {
@@ -102,12 +114,12 @@ class ProjectScheduleController extends Controller
         
         $request->validate([
             'items' => 'required|array',
-            'items.*.id' => 'required|exists:project_schedule_items,id',
+            'items.*.id' => 'required|exists:project_finance_items,id',
             'items.*.position' => 'required|integer|min:0',
         ]);
         
         foreach ($request->items as $itemData) {
-            ProjectScheduleItem::where('id', $itemData['id'])
+            ProjectFinanceItem::where('id', $itemData['id'])
                 ->where('project_id', $project->id)
                 ->update(['position' => $itemData['position']]);
         }
@@ -119,9 +131,9 @@ class ProjectScheduleController extends Controller
     }
     
     /**
-     * Удалить элемент графика
+     * Удалить элемент финансов
      */
-    public function destroy(ProjectScheduleItem $item)
+    public function destroy(ProjectFinanceItem $item)
     {
         $this->authorize('update', $item->project);
         
@@ -130,6 +142,21 @@ class ProjectScheduleController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Элемент успешно удален'
+        ]);
+    }
+    
+    /**
+     * Экспорт данных в Excel
+     */
+    public function export(Project $project)
+    {
+        $this->authorize('view', $project);
+        
+        // Здесь должен быть код для экспорта в Excel
+        // Пока просто возвращаем заглушку
+        return response()->json([
+            'success' => true,
+            'message' => 'Функция экспорта находится в разработке'
         ]);
     }
 }

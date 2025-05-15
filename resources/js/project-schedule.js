@@ -3,7 +3,7 @@
  */
 
 // Класс для управления элементами графика
-class ScheduleManager {
+class financeManager {
     constructor(projectId) {
         this.projectId = projectId;
         this.modal = null;
@@ -19,9 +19,9 @@ class ScheduleManager {
     }
     
     initModal() {
-        this.modal = new bootstrap.Modal(document.getElementById('scheduleItemModal'));
-        this.form = document.getElementById('scheduleItemForm');
-        this.saveButton = document.getElementById('saveScheduleItem');
+        this.modal = new bootstrap.Modal(document.getElementById('financeItemModal'));
+        this.form = document.getElementById('financeItemForm');
+        this.saveButton = document.getElementById('savefinanceItem');
     }
     
     bindEvents() {
@@ -51,7 +51,7 @@ class ScheduleManager {
     
     // Загрузка всех элементов для проекта
     loadItems() {
-        axios.get(`/partner/projects/${this.projectId}/schedule/items`)
+        axios.get(`/partner/projects/${this.projectId}/finance/items`)
             .then(response => {
                 if (response.data.success) {
                     this.renderItems(response.data.data);
@@ -136,8 +136,8 @@ class ScheduleManager {
         this.currentItemId = null;
         
         // Устанавливаем заголовок и тип
-        document.getElementById('scheduleItemModalLabel').textContent = 'Добавление элемента';
-        document.getElementById('scheduleItemType').value = type;
+        document.getElementById('financeItemModalLabel').textContent = 'Добавление элемента';
+        document.getElementById('financeItemType').value = type;
         
         // Сбрасываем форму
         this.form.reset();
@@ -152,14 +152,14 @@ class ScheduleManager {
         this.currentItemId = itemId;
         
         // Запрос данных элемента
-        axios.get(`/partner/schedule-items/${itemId}`)
+        axios.get(`/partner/finance-items/${itemId}`)
             .then(response => {
                 if (response.data.success) {
                     const item = response.data.data;
                     
                     // Устанавливаем заголовок и данные формы
-                    document.getElementById('scheduleItemModalLabel').textContent = 'Редактирование элемента';
-                    document.getElementById('scheduleItemType').value = item.type;
+                    document.getElementById('financeItemModalLabel').textContent = 'Редактирование элемента';
+                    document.getElementById('financeItemType').value = item.type;
                     document.getElementById('itemName').value = item.name;
                     document.getElementById('itemTotal').value = item.total_amount;
                     document.getElementById('itemPaid').value = item.paid_amount;
@@ -189,9 +189,9 @@ class ScheduleManager {
         
         if (!this.isEditing) {
             // Добавление нового элемента
-            formData.type = document.getElementById('scheduleItemType').value;
+            formData.type = document.getElementById('financeItemType').value;
             
-            axios.post(`/partner/projects/${this.projectId}/schedule/items`, formData)
+            axios.post(`/partner/projects/${this.projectId}/finance/items`, formData)
                 .then(response => {
                     if (response.data.success) {
                         this.modal.hide();
@@ -205,7 +205,7 @@ class ScheduleManager {
                 });
         } else {
             // Обновление существующего элемента
-            axios.put(`/partner/schedule-items/${this.currentItemId}`, formData)
+            axios.put(`/partner/finance-items/${this.currentItemId}`, formData)
                 .then(response => {
                     if (response.data.success) {
                         this.modal.hide();
@@ -226,7 +226,7 @@ class ScheduleManager {
             return;
         }
         
-        axios.delete(`/partner/schedule-items/${itemId}`)
+        axios.delete(`/partner/finance-items/${itemId}`)
             .then(response => {
                 if (response.data.success) {
                     this.showAlert('Элемент успешно удален.', 'success');
@@ -241,7 +241,7 @@ class ScheduleManager {
     
     // Показать уведомление
     showAlert(message, type) {
-        const alertContainer = document.getElementById('scheduleAlertContainer');
+        const alertContainer = document.getElementById('financeAlertContainer');
         if (!alertContainer) return;
         
         const alert = document.createElement('div');
@@ -275,7 +275,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (projectIdElement) {
         const projectId = projectIdElement.getAttribute('data-project-id');
         if (projectId) {
-            window.scheduleManager = new ScheduleManager(projectId);
+            window.financeManager = new financeManager(projectId);
         }
     }
 });

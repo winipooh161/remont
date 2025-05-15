@@ -1,6 +1,9 @@
 import './bootstrap';
 import $ from 'jquery';
 
+// Глобальный доступ к jQuery
+window.$ = window.jQuery = $;
+
 // Проверка загрузки Bootstrap и инициализация необходимых компонентов
 document.addEventListener('DOMContentLoaded', function() {
     if (typeof bootstrap !== 'undefined') {
@@ -45,5 +48,9 @@ import './project-filters.js';
 import './project-file-upload.js';
 // Импортируем скрипт для управления вкладками проекта
 import './project-tabs.js';
-// Импортируем скрипт для управления элементами графика работ
-import './project-schedule.js';
+// Импортируем скрипт для управления элементами финансов (заменяем старый импорт)
+import './project-finance.js';
+// Добавляем отладочный скрипт для финансовой вкладки
+import './debug-finance.js';
+// Убираем импорт project-schedule.js, так как теперь используем project-finance.js
+// import './project-schedule.js';

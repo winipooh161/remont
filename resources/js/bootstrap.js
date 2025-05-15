@@ -10,7 +10,7 @@ if (typeof window !== 'undefined') {
 } else {
     console.error('Window object not available');
 }
-
+import Inputmask from 'inputmask';
 /**
  * We'll load the axios HTTP library which allows us to easily issue requests
  * to our Laravel back-end. This library automatically handles sending the

@@ -41,11 +41,11 @@
 <div class="mb-4">
     <h5>План-график работ и материалов</h5>
     
-    @if($project->schedule_link)
+    @if($project->finance_link)
         <div class="mb-4 mt-2">
             <div class="d-flex align-items-center mb-2">
                 <strong>Ссылка на линейный график:</strong>
-                <a href="{{ $project->schedule_link }}" target="_blank" class="btn btn-sm btn-outline-primary ms-2">
+                <a href="{{ $project->finance_link }}" target="_blank" class="btn btn-sm btn-outline-primary ms-2">
                     <i class="fas fa-external-link-alt me-1"></i> Открыть
                 </a>
             </div>
@@ -53,10 +53,10 @@
     @endif
 
     <!-- Контейнер для уведомлений -->
-    <div id="scheduleAlertContainer"></div>
+    <div id="financeAlertContainer"></div>
 
     <!-- Аккордеон для разделов графика -->
-    <div class="accordion mt-4" id="scheduleAccordion">
+    <div class="accordion mt-4" id="financeAccordion">
         <!-- Основные работы -->
         <div class="accordion-item">
             <h2 class="accordion-header" id="headingMainWorks">
@@ -285,17 +285,17 @@
 </div>
 
 <!-- Модальное окно для добавления/редактирования элемента -->
-<div class="modal fade" id="scheduleItemModal" tabindex="-1" aria-labelledby="scheduleItemModalLabel" aria-hidden="true">
+<div class="modal fade" id="financeItemModal" tabindex="-1" aria-labelledby="financeItemModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="scheduleItemModalLabel">Добавление элемента</h5>
+                <h5 class="modal-title" id="financeItemModalLabel">Добавление элемента</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="scheduleItemForm">
-                    <input type="hidden" id="scheduleItemType" name="type">
-                    <input type="hidden" id="scheduleItemId" name="id">
+                <form id="financeItemForm">
+                    <input type="hidden" id="financeItemType" name="type">
+                    <input type="hidden" id="financeItemId" name="id">
                     
                     <div class="mb-3">
                         <label for="itemName" class="form-label">Наименование</label>
@@ -315,7 +315,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                <button type="button" class="btn btn-primary" id="saveScheduleItem">Сохранить</button>
+                <button type="button" class="btn btn-primary" id="savefinanceItem">Сохранить</button>
             </div>
         </div>
     </div>
@@ -326,11 +326,11 @@
     document.addEventListener('DOMContentLoaded', function() {
         // Инициализация переменных для работы с модальным окном
         let modal;
-        const modalElement = document.getElementById('scheduleItemModal');
-        const form = document.getElementById('scheduleItemForm');
-        const saveButton = document.getElementById('saveScheduleItem');
-        const typeInput = document.getElementById('scheduleItemType');
-        const idInput = document.getElementById('scheduleItemId');
+        const modalElement = document.getElementById('financeItemModal');
+        const form = document.getElementById('financeItemForm');
+        const saveButton = document.getElementById('savefinanceItem');
+        const typeInput = document.getElementById('financeItemType');
+        const idInput = document.getElementById('financeItemId');
         const projectId = {{ $project->id }};
         
         // Полностью отключаем стандартное поведение Bootstrap для аккордеона
@@ -400,7 +400,7 @@
                 idInput.value = '';
                 
                 // Установка заголовка
-                document.getElementById('scheduleItemModalLabel').textContent = 'Добавление элемента';
+                document.getElementById('financeItemModalLabel').textContent = 'Добавление элемента';
                 
                 // Отображение модального окна
                 modal.show();
@@ -448,8 +448,8 @@
                 `;
             });
             
-            // Запрос к API для получения всех элементов
-            fetch(`/partner/projects/${projectId}/schedule/items`)
+            // ИСПРАВЛЕНО: Изменен URL с /schedule/items на /finance
+            fetch(`/partner/projects/${projectId}/finance`)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Ошибка при загрузке данных');
@@ -564,8 +564,8 @@
         
         // Функция для отображения модального окна с данными для редактирования
         function showEditModal(itemId) {
-            // Запрос к API для получения данных элемента
-            fetch(`/partner/schedule-items/${itemId}`)
+            // ИСПРАВЛЕНО: Изменен URL с /schedule-items/ на /finance-items/
+            fetch(`/partner/finance-items/${itemId}`)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Ошибка при загрузке данных элемента');
@@ -584,7 +584,7 @@
                         document.getElementById('itemPaid').value = item.paid_amount;
                         
                         // Устанавливаем заголовок
-                        document.getElementById('scheduleItemModalLabel').textContent = 'Редактирование элемента';
+                        document.getElementById('financeItemModalLabel').textContent = 'Редактирование элемента';
                         
                         // Отображаем модальное окно
                         modal.show();
@@ -600,8 +600,8 @@
         
         // Функция для создания нового элемента
         function createItem(formData) {
-            // Запрос к API для создания элемента
-            fetch(`/partner/projects/${projectId}/schedule/items`, {
+            // ИСПРАВЛЕНО: Изменен URL с /schedule/items на /finance/items
+            fetch(`/partner/projects/${projectId}/finance/items`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -637,8 +637,8 @@
         
         // Функция для обновления существующего элемента
         function updateItem(itemId, formData) {
-            // Запрос к API для обновления элемента
-            fetch(`/partner/schedule-items/${itemId}`, {
+            // ИСПРАВЛЕНО: Изменен URL с /schedule-items/ на /finance-items/
+            fetch(`/partner/finance-items/${itemId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -678,8 +678,8 @@
                 return;
             }
             
-            // Запрос к API для удаления элемента
-            fetch(`/partner/schedule-items/${itemId}`, {
+            // ИСПРАВЛЕНО: Изменен URL с /schedule-items/ на /finance-items/
+            fetch(`/partner/finance-items/${itemId}`, {
                 method: 'DELETE',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
@@ -710,7 +710,7 @@
         
         // Функция для отображения уведомлений
         function showAlert(message, type) {
-            const alertContainer = document.getElementById('scheduleAlertContainer');
+            const alertContainer = document.getElementById('financeAlertContainer');
             if (!alertContainer) return;
             
             const alert = document.createElement('div');

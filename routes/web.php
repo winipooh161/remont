@@ -8,8 +8,8 @@ use App\Http\Controllers\Partner\PartnerController;
 use App\Http\Controllers\Partner\ProjectController;
 use App\Http\Controllers\Partner\ProjectFileController;
 use App\Http\Controllers\Partner\ProjectScheduleController;
+use App\Http\Controllers\Partner\ProjectFinanceController;
 use App\Http\Controllers\ProfileController;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -57,24 +57,29 @@ Route::middleware(['auth', 'partner'])->prefix('partner')->group(function () {
         ->name('partner.project-files.download');
     Route::delete('project-files/{projectFile}', [ProjectFileController::class, 'destroy'])
         ->name('partner.project-files.destroy');
-        
-    // Маршруты для работы с графиком работ и материалов
-    Route::prefix('projects/{project}/schedule')->group(function () {
-        Route::get('items', [ProjectScheduleController::class, 'index'])->name('partner.projects.schedule.index');
-        Route::post('items', [ProjectScheduleController::class, 'store'])->name('partner.projects.schedule.store');
-        Route::put('items/positions', [ProjectScheduleController::class, 'updatePositions'])->name('partner.projects.schedule.positions');
-        Route::get('export', [ProjectScheduleController::class, 'export'])->name('partner.projects.schedule.export');
+    
+    // ИСПРАВЛЕНО: Удалено дублирование маршрутов finance
+    Route::prefix('projects/{project}/finance')->group(function () {
+        Route::get('/', [ProjectFinanceController::class, 'index'])->name('partner.projects.finance.index');
+        Route::post('/items', [ProjectFinanceController::class, 'store'])->name('partner.projects.finance.store');
+        Route::put('/positions', [ProjectFinanceController::class, 'updatePositions'])->name('partner.projects.finance.positions');
+        Route::get('/export', [ProjectFinanceController::class, 'export'])->name('partner.projects.finance.export');
     });
     
-    Route::prefix('projects/schedule')->group(function () {
-        Route::post('preview-excel', [ProjectScheduleController::class, 'previewExcel'])->name('partner.projects.schedule.preview-excel');
-        Route::post('import-excel', [ProjectScheduleController::class, 'importExcel'])->name('partner.projects.schedule.import-excel');
-    });
-    
-    Route::prefix('schedule-items')->group(function () {
-        Route::get('{item}', [ProjectScheduleController::class, 'show'])->name('partner.schedule-items.show');
-        Route::put('{item}', [ProjectScheduleController::class, 'update'])->name('partner.schedule-items.update');
-        Route::delete('{item}', [ProjectScheduleController::class, 'destroy'])->name('partner.schedule-items.destroy');
+    // Маршруты для работы с отдельными элементами финансов
+    Route::prefix('finance-items')->group(function () {
+        Route::get('{item}', [ProjectFinanceController::class, 'show'])
+            ->name('partner.finance-items.show')
+            ->where('item', '[0-9]+')
+            ->missing(function () {
+                return response()->json(['success' => false, 'message' => 'Элемент не найден'], 404);
+            });
+        Route::put('{item}', [ProjectFinanceController::class, 'update'])
+            ->name('partner.finance-items.update')
+            ->where('item', '[0-9]+');
+        Route::delete('{item}', [ProjectFinanceController::class, 'destroy'])
+            ->name('partner.finance-items.destroy')
+            ->where('item', '[0-9]+');
     });
 });
 

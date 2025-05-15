@@ -1,6 +1,13 @@
-import Inputmask from 'inputmask';
 
-window.$ = window.jQuery = $;
+// Импортируем jQuery (если не установлен, установите через npm install jquery)
+try {
+    // Пробуем импортировать jQuery
+    const jQuery = require('jquery');
+    window.$ = window.jQuery = jQuery;
+    console.log('jQuery успешно импортирован в mask.js');
+} catch (e) {
+    console.error('Ошибка импорта jQuery:', e);
+}
 
 // Немедленно вызываемая функция для обработки маски телефона
 (function() {
@@ -157,7 +164,14 @@ window.$ = window.jQuery = $;
         setupNameValidation();
     });
     
-    // Экспорт функций для использования из других мест
-    window.applyPhoneMask = applyPhoneMask;
-    window.setupNameValidation = setupNameValidation;
-})();
+    if (typeof $ === 'undefined' && typeof jQuery !== 'undefined') {
+        window.$ = jQuery;
+    }
+    
+    if (typeof $ !== 'undefined') {
+        // Применение маски для телефонных номеров
+        $('input[name="phone"]').mask('+7 (999) 999-99-99');
+    } else {
+        console.error('jQuery не загружен. Маска для телефонов не будет работать.');
+    }
+});

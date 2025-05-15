@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class ProjectScheduleItem extends Model
+class ProjectFinanceItem extends Model
 {
     use HasFactory;
 
@@ -17,10 +17,10 @@ class ProjectScheduleItem extends Model
      */
     protected $fillable = [
         'project_id',
+        'type',
         'name',
-        'start_date',
-        'end_date',
-        'days',
+        'total_amount',
+        'paid_amount',
         'position',
     ];
 
@@ -30,9 +30,8 @@ class ProjectScheduleItem extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'start_date' => 'date',
-        'end_date' => 'date',
-        'days' => 'integer',
+        'total_amount' => 'decimal:2',
+        'paid_amount' => 'decimal:2',
         'position' => 'integer',
     ];
 
@@ -42,13 +41,5 @@ class ProjectScheduleItem extends Model
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
-    }
-    
-    /**
-     * Проверить, является ли элемент закупкой.
-     */
-    public function getIsZakupkaAttribute(): bool
-    {
-        return str_contains(strtolower($this->name), '(закупка)');
     }
 }

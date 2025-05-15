@@ -116,11 +116,19 @@ class Project extends Model
     }
 
     /**
+     * Получить элементы графика работ и материалов проекта.
+     */
+    public function financeItems(): HasMany
+    {
+        return $this->hasMany(ProjectFinanceItem::class);
+    }
+
+    /**
      * Получить основные работы.
      */
     public function mainWorks(): HasMany
     {
-        return $this->hasMany(ProjectScheduleItem::class)->where('type', 'main_work')->orderBy('position');
+        return $this->hasMany(ProjectFinanceItem::class)->where('type', 'main_work')->orderBy('position');
     }
 
     /**
@@ -128,7 +136,7 @@ class Project extends Model
      */
     public function mainMaterials(): HasMany
     {
-        return $this->hasMany(ProjectScheduleItem::class)->where('type', 'main_material')->orderBy('position');
+        return $this->hasMany(ProjectFinanceItem::class)->where('type', 'main_material')->orderBy('position');
     }
 
     /**
@@ -136,7 +144,7 @@ class Project extends Model
      */
     public function additionalWorks(): HasMany
     {
-        return $this->hasMany(ProjectScheduleItem::class)->where('type', 'additional_work')->orderBy('position');
+        return $this->hasMany(ProjectFinanceItem::class)->where('type', 'additional_work')->orderBy('position');
     }
 
     /**
@@ -144,7 +152,7 @@ class Project extends Model
      */
     public function additionalMaterials(): HasMany
     {
-        return $this->hasMany(ProjectScheduleItem::class)->where('type', 'additional_material')->orderBy('position');
+        return $this->hasMany(ProjectFinanceItem::class)->where('type', 'additional_material')->orderBy('position');
     }
 
     /**
@@ -152,8 +160,10 @@ class Project extends Model
      */
     public function transportationItems(): HasMany
     {
-        return $this->hasMany(ProjectScheduleItem::class)->where('type', 'transportation')->orderBy('position');
+        return $this->hasMany(ProjectFinanceItem::class)->where('type', 'transportation')->orderBy('position');
     }
+
+   
 
     /**
      * Получить строковое представление типа работ.

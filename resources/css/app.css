@@ -1,0 +1,137 @@
+@import 'bootstrap/dist/css/bootstrap.min.css';
+@import 'address-autocomplete.css';
+
+/* Основные стили сайта */
+body, html {
+    font-family:"Onest" !important;}
+
+/* Убедимся, что все элементы наследуют шрифт */
+* {
+    font-family: inherit;
+}
+
+/* Стили для боковой панели */
+.wrapper {
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+}
+
+.sidebar {
+    min-width: 250px;
+    max-width: 250px;
+    background: #343a40;
+    color: #fff;
+    transition: all 0.3s;
+    height: 100vh;
+    position: fixed;
+    overflow-y: auto;
+    z-index: 999;
+}
+
+.sidebar.active {
+    margin-left: -250px;
+}
+
+.sidebar .sidebar-header {
+    padding: 15px;
+    background: #212529;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sidebar ul.components {
+    padding: 0 0 20px 0;
+}
+
+.sidebar ul li a {
+    padding: 10px 20px;
+    font-size: 1em;
+    display: block;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.sidebar ul li a:hover {
+    color: #fff;
+    background: #495057;
+}
+
+.sidebar ul li.active > a {
+    color: #fff;
+    background: #007bff;
+}
+
+.sidebar ul ul a {
+    padding-left: 30px !important;
+    background: #454d55;
+}
+
+#content {
+    width: 100%;
+    min-height: 100vh;
+    transition: all 0.3s;
+    position: relative;
+    margin-left: 250px;
+}
+
+#content.active {
+    margin-left: 0;
+}
+
+.sidebar-header {
+    font-size: 14px;
+    color: #adb5bd;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    padding-left: 20px;
+}
+
+/* Мобильная версия */
+@media (max-width: 768px) {
+    .sidebar {
+        margin-left: -250px;
+    }
+    .sidebar.active {
+        margin-left: 0;
+    }
+    #content {
+        margin-left: 0;
+    }
+    #content.active {
+        margin-left: 250px;
+        position: fixed;
+    }
+}
+/* Стили для вкладок на одной линии с горизонтальной прокруткой */
+.nav-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+}
+
+.nav-tabs .nav-item {
+    float: none;
+    display: inline-block;
+}
+
+/* Убираем полосу прокрутки из вида */
+.nav-tabs::-webkit-scrollbar {
+    display: none;
+}
+
+/* Для Firefox */
+.nav-tabs {
+    scrollbar-width: none;
+}
+
+/* Стиль активной вкладки */
+.nav-tabs .nav-link.active {
+    font-weight: 500;
+    border-bottom-color: #007bff;
+    color: #007bff;
+}
